@@ -167,3 +167,14 @@ html.dark .token.punctuation {
     font-size: 1rem; /* 16px */
   }
 }
+/* Add to frontend/app/globals.css */
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}

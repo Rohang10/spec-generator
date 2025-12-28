@@ -15,7 +15,7 @@ export default function AnimatedTabs({
     <div
       className="
         grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5
-        gap-2 mb-5 p-2 rounded-xl
+        gap-3 mb-5 p-2 rounded-xl
         bg-slate-100 dark:bg-white/5
         w-full
       "
