@@ -3,7 +3,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 
 export const metadata: Metadata = {
-  title: "AI Spec Generator - Transform Requirements into Technical Specifications",
+  title:
+    "AI Spec Generator - Transform Requirements into Technical Specifications",
   description:
     "Automatically convert messy requirements into clear technical specifications. Generate modules, features, user stories, API endpoints, and database schemas with AI-powered analysis.",
 };
@@ -22,18 +23,19 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               (function () {
-                try {
-                  const theme = localStorage.getItem("theme");
-                  if (theme === "dark") {
-                    document.documentElement.classList.add("dark");
-                  } else {
-                    document.documentElement.classList.add("light");
-                  }
-                } catch (e) {
-                  document.documentElement.classList.add("light");
-                }
-              })();
-            `,
+              try {
+              const stored = localStorage.getItem("theme");
+              const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+              const theme = stored || (prefersDark ? "dark" : "dark"); // FORCE DARK DEFAULT
+
+              document.documentElement.classList.remove("light", "dark");
+              document.documentElement.classList.add(theme);
+              } catch (e) {
+                document.documentElement.classList.add("dark");
+            }
+            })();
+          `,
           }}
         />
       </head>
