@@ -14,9 +14,10 @@ export default function AnimatedTabs({
   return (
     <div
       className="
-        flex gap-2 mb-5 p-1 rounded-full
+        grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5
+        gap-2 mb-5 p-2 rounded-xl
         bg-slate-100 dark:bg-white/5
-        text-(--text)
+        w-full
       "
     >
       {tabs.map((tab) => {
@@ -26,7 +27,17 @@ export default function AnimatedTabs({
           <button
             key={tab}
             onClick={() => setActive(tab)}
-            className="relative px-4 py-2 rounded-full"
+            className="
+              relative 
+              px-2 sm:px-3 md:px-4
+              py-2.5
+              rounded-full
+              text-xs sm:text-sm md:text-base
+              font-medium
+              transition-colors
+              min-h-11
+              flex items-center justify-center
+            "
           >
             {isActive && (
               <motion.div
@@ -37,7 +48,8 @@ export default function AnimatedTabs({
             )}
 
             <span
-              className={`relative z-10 font-medium transition-colors
+              className={`
+                relative z-10 transition-colors text-center leading-tight
                 ${
                   isActive
                     ? "text-white"
