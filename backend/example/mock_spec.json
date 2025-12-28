@@ -1,0 +1,60 @@
+{
+  "modules": [
+    {
+      "name": "Authentication",
+      "description": "Handles user login and signup"
+    }
+  ],
+  "features_by_module": {
+    "Authentication": [
+      "User signup with email and password",
+      "User login with JWT"
+    ]
+  },
+  "user_stories": [
+    {
+      "role": "User",
+      "goal": "log into the system",
+      "benefit": "access my account securely"
+    }
+  ],
+  "api_endpoints": [
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "auth_required": false,
+      "request_schema": {
+        "email": "string",
+        "password": "string"
+      },
+      "response_schema": {
+        "access_token": "string"
+      },
+      "error_cases": [
+        "Invalid credentials",
+        "User not found"
+      ]
+    }
+  ],
+  "db_schema": [
+    {
+      "table_name": "users",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "constraints": "primary key"
+        },
+        {
+          "name": "email",
+          "type": "varchar",
+          "constraints": "unique"
+        }
+      ]
+    }
+  ],
+  "open_questions": [
+    "Should password reset be supported?",
+    "Is OAuth login required?"
+  ]
+}

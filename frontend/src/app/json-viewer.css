@@ -1,0 +1,70 @@
+/* Light Theme - Professional Blue/Green */
+.json-viewer-light {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px solid #bae6fd;
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+}
+
+.json-viewer-light .token.property {
+  color: #0369a1;
+  font-weight: 600;
+}
+
+.json-viewer-light .token.string {
+  color: #15803d;
+}
+
+.json-viewer-light .token.number {
+  color: #c026d3;
+}
+
+.json-viewer-light .token.boolean {
+  color: #dc2626;
+}
+
+.json-viewer-light .token.null {
+  color: #64748b;
+}
+
+.json-viewer-light .token.punctuation {
+  color: #475569;
+}
+
+/* Dark Theme - Vibrant Contrast */
+.json-viewer-dark {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.json-viewer-dark .token.property {
+  color: #7dd3fc;
+  font-weight: 600;
+}
+
+.json-viewer-dark .token.string {
+  color: #86efac;
+}
+
+.json-viewer-dark .token.number {
+  color: #f0abfc;
+}
+
+.json-viewer-dark .token.boolean {
+  color: #fca5a5;
+}
+
+.json-viewer-dark .token.null {
+  color: #94a3b8;
+}
+
+.json-viewer-dark .token.punctuation {
+  color: #cbd5e1;
+}
+
+/* Optional: Add copy button hover effects */
+.json-viewer-light:hover,
+.json-viewer-dark:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}

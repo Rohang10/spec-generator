@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+/* ============================= */
+/* 🌙 DARK THEME VARIABLES       */
+/* ============================= */
+html.dark {
+  --bg: #020617;
+  --card: #0f172a;
+  --text: #e5e7eb;
+
+  --input-bg: #1e293b;
+  --input-text: #e5e7eb;
+  --input-border: #334155;
+  --placeholder: #94a3b8;
+}
+
+/* ============================= */
+/* 🌞 LIGHT THEME VARIABLES      */
+/* ============================= */
+html.light {
+  --bg: #f1f5f9;      /* page background */
+  --card: #ffffff;   /* cards */
+  --text: #020617;
+
+  --input-bg: #ffffff;
+  --input-text: #020617;
+  --input-border: #cbd5e1;
+  --placeholder: #64748b;
+}
+
+/* ============================= */
+/* 🌍 GLOBAL BASE STYLES         */
+/* ============================= */
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ============================= */
+/* ✏️ FORM ELEMENTS              */
+/* ============================= */
+textarea,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+select {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border-color: var(--input-border);
+}
+
+/* Placeholder */
+textarea::placeholder,
+input::placeholder {
+  color: var(--placeholder);
+  opacity: 1;
+}
+
+/* Focus ring */
+textarea:focus,
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* ================================================= */
+/* 🌞 PRISM — VS CODE LIGHT+ (EXACT PALETTE)         */
+/* ================================================= */
+
+/* JSON panel background (single surface) */
+html.light pre[class*="language-"] {
+  background-color: #f8fafc; /* VS Code Light panel */
+  border: 1px solid #e2e8f0;
+}
+
+/* IMPORTANT: remove per-line background */
+html.light code[class*="language-"] {
+  background: transparent;
+}
+
+/* Tokens */
+html.light .token.property {
+  color: #001080; /* VS Code blue */
+}
+
+html.light .token.string {
+  color: #a31515; /* VS Code red */
+}
+
+html.light .token.number {
+  color: #098658; /* VS Code green */
+}
+
+html.light .token.boolean {
+  color: #0000ff; /* VS Code blue */
+}
+
+html.light .token.null {
+  color: #0000ff; /* VS Code blue */
+}
+
+html.light .token.punctuation {
+  color: #000000; /* VS Code black */
+}
+
+/* ================================================= */
+/* 🌙 PRISM — VS CODE DARK+                          */
+/* ================================================= */
+
+html.dark pre[class*="language-"] {
+  background-color: #1e1e1e; /* VS Code Dark panel */
+  border: 1px solid #2a2a2a;
+}
+
+html.dark code[class*="language-"] {
+  background: transparent;
+}
+
+html.dark .token.property {
+  color: #9cdcfe; /* VS Code blue */
+}
+
+html.dark .token.string {
+  color: #ce9178; /* VS Code orange */
+}
+
+html.dark .token.number {
+  color: #b5cea8; /* VS Code green */
+}
+
+html.dark .token.boolean {
+  color: #569cd6; /* VS Code cyan */
+}
+
+html.dark .token.null {
+  color: #569cd6; /* VS Code cyan */
+}
+
+html.dark .token.punctuation {
+  color: #d4d4d4; /* VS Code light gray */
+}
