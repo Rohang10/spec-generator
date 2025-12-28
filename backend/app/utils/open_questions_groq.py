@@ -1,15 +1,29 @@
 import os
 import json
+import re
 from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
 
+# ---------- Groq Client ----------
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-
 MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 
 
+# ---------- Helper: Safe JSON Extraction ----------
+def extract_json_array(text: str) -> list[str]:
+    """
+    Extract the first valid JSON array from LLM output.
+    This handles cases where the model wraps JSON with text.
+    """
+    match = re.search(r"\[[\s\S]*\]", text)
+    if not match:
+        raise ValueError("No JSON array found in LLM output")
+    return json.loads(match.group())
+
+
+# ---------- Main Function ----------
 def generate_open_questions(
     requirements_text: str,
     features: dict,
@@ -18,12 +32,15 @@ def generate_open_questions(
     db_schema: list,
 ) -> list[str]:
     """
-    Generate 3–4 intelligent open questions based on the generated spec.
+    Generate 3–4 intelligent, context-specific open questions.
     Runs ONLY after the pipeline succeeds.
     """
 
     prompt = f"""
 You are a senior product manager reviewing a generated software specification.
+
+Your goal is to identify missing decisions, unclear requirements,
+or product scope gaps specific to THIS system.
 
 Original requirement:
 {requirements_text}
@@ -40,15 +57,23 @@ API endpoints:
 Database schema:
 {json.dumps(db_schema, indent=2)}
 
-Task:
-Generate exactly 3–4 insightful open questions that help clarify
-missing decisions, edge cases, or product scope.
+Instructions:
+- Generate exactly 3 or 4 clarification questions
+- Questions MUST be specific to this product and domain
+- Do NOT repeat listed features
+- Do NOT ask generic SaaS questions
+- Focus on permissions, workflows, edge cases, and business rules
 
-Rules:
-- Questions must be concise and actionable
-- Do NOT repeat existing features
-- Do NOT ask obvious or generic questions
-- Output ONLY a JSON array of strings
+Output format (STRICT):
+Return ONLY valid JSON.
+Do NOT include explanations, headings, or extra text.
+
+Example output:
+[
+  "Should tasks support recurring schedules?",
+  "Do priority levels affect deadline notifications?",
+  "Is task deletion permanent or soft-deleted?"
+]
 """
 
     response = client.chat.completions.create(
@@ -56,23 +81,26 @@ Rules:
         messages=[
             {
                 "role": "system",
-                "content": "You generate high-quality product clarification questions.",
+                "content": "You generate precise, context-aware product clarification questions.",
             },
             {"role": "user", "content": prompt},
         ],
-        temperature=0.25,
+        temperature=0.2,
     )
 
-    content = response.choices[0].message.content.strip()
+    raw_output = response.choices[0].message.content.strip()
 
     try:
-        questions = json.loads(content)
+        questions = extract_json_array(raw_output)
         return questions[:4]
-    except Exception:
-        # Safe fallback (never break pipeline)
+
+    except Exception :
+        # ---------- Fallback (never break pipeline) ----------
+        print("⚠️ Open-question parsing failed. Raw output:")
+        print(raw_output)
+
         return [
             "Are there different user roles with varying permissions?",
             "Should notifications or reminders be configurable?",
             "Are audit logs or activity tracking required?",
-            "Are there scalability or performance constraints?"
         ]
