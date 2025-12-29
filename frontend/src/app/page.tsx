@@ -9,9 +9,9 @@ import ErrorBanner from "@/components/ErrorBanner";
 import SpecSections from "@/components/SpecSections";
 import ExportButtons from "@/components/ExportButtons";
 import AnimatedTabs from "@/components/AnimatedTabs";
-import { generateSpec } from "@/lib/api";
+import RefinePanel from "@/components/RefinePanel";
+import { generateSpec, refineSpec } from "@/lib/api";
 
-// ✅ Correct error type (matches backend + ErrorBanner)
 type ApiError = {
   status: number;
   code: string;
@@ -20,8 +20,10 @@ type ApiError = {
 
 export default function Page() {
   const [text, setText] = useState("");
-  const [loading, setLoading] = useState(false);
   const [spec, setSpec] = useState<any>(null);
+
+  const [loading, setLoading] = useState(false);     // generate
+  const [refining, setRefining] = useState(false);   // refine
   const [error, setError] = useState<ApiError | null>(null);
 
   const tabs = [
@@ -34,6 +36,7 @@ export default function Page() {
 
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
+  // ---------------- GENERATE ----------------
   async function handleGenerate() {
     setLoading(true);
     setError(null);
@@ -54,10 +57,31 @@ export default function Page() {
     }
   }
 
+  // ---------------- REFINE ----------------
+  async function handleRefine(instruction: string) {
+    setRefining(true);
+    setError(null);
+
+    try {
+      const data = await refineSpec(spec, instruction);
+      setSpec(data.spec);
+      setActiveTab(tabs[0]);
+    } catch (err: any) {
+      setError({
+        status: err.status || 400,
+        code: err.code || "UNKNOWN_ERROR",
+        message: err.message || "Something went wrong",
+      });
+    } finally {
+      setRefining(false);
+    }
+  }
+
   return (
     <main className="max-w-5xl mx-auto px-4 py-10">
       <Header />
 
+      {/* ✅ Generate Spec input NEVER disappears */}
       <InputPanel
         value={text}
         onChange={setText}
@@ -65,9 +89,15 @@ export default function Page() {
         loading={loading}
       />
 
-      {loading && <Spinner />}
+      {/* 🔄 Spinner for Generate Spec */}
+      {loading && (
+        <div className="mt-8 flex justify-center">
+          <Spinner />
+        </div>
+      )}
 
-      {error && (
+      {/* ❌ Errors (only when idle) */}
+      {error && !loading && !refining && (
         <div className="mt-6">
           <ErrorBanner
             status={error.status}
@@ -77,28 +107,40 @@ export default function Page() {
         </div>
       )}
 
+      {/* 📄 Spec + Refine UI — hidden ONLY while refining */}
       {spec && (
-        <div
-          className="
-            mt-10
-            bg-(--card)
-            p-6
-            border border-black/10 dark:border-white/10
-            shadow-xl
-            transition-transform
-            hover:-translate-y-0.5
-          "
-        >
-          <AnimatedTabs
-            tabs={tabs}
-            active={activeTab}
-            setActive={setActiveTab}
-          />
+        <>
+          {/* 🔄 Spinner during refine (ONLY thing visible) */}
+          {refining ? (
+          <div className="mt-16 flex justify-center">
+            <Spinner />
+          </div>
+        ) : (
+          <div
+            className="
+              mt-10
+              bg-(--card)
+              p-6
+              border border-black/10 dark:border-white/10
+              shadow-xl
+              rounded-2xl
+            "
+          >
+            <AnimatedTabs
+             tabs={tabs}
+              active={activeTab}
+              setActive={setActiveTab}
+            />
 
-          <SpecSections spec={spec} activeTab={activeTab} />
+            <SpecSections spec={spec} activeTab={activeTab} />
 
-          <ExportButtons spec={spec} />
-        </div>
+            <ExportButtons spec={spec} />
+
+            {/* ✅ RefinePanel STAYS MOUNTED */}
+            <RefinePanel onRefine={handleRefine} loading={false} />
+          </div>
+        )}
+        </>
       )}
     </main>
   );

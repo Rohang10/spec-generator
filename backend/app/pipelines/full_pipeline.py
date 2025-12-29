@@ -1,6 +1,7 @@
 import uuid
 import json
 import os
+from typing import Dict
 
 from app.schemas.spec_schema import SpecOutput
 from app.core.config import settings
@@ -8,6 +9,7 @@ from app.pipelines.step1_features import generate_features
 from app.pipelines.step2_user_stories import generate_user_stories
 from app.pipelines.step3_api_db import generate_api_db
 from app.utils.open_questions_groq import generate_open_questions
+from app.pipelines.refine_spec import refine_spec
 
 
 def run_pipeline(requirements_text: str):
@@ -53,6 +55,7 @@ def run_pipeline(requirements_text: str):
     )
 
     final_spec = {
+        "version": 1,
         **features,
         **stories,
         **api_db,
@@ -68,3 +71,32 @@ def run_pipeline(requirements_text: str):
         json.dump(final_spec, f, indent=2)
 
     return trace_id, final_spec
+
+
+# 🔁 REFINEMENT PIPELINE (NEW)
+# =========================================================
+def run_refinement_pipeline(
+    existing_spec: Dict,
+    instruction: str,
+):
+    """
+    Refines an existing spec based on user instruction.
+    """
+
+    trace_id = str(uuid.uuid4())
+
+    # ---- RUN REFINEMENT ----
+    updated_spec = refine_spec(
+        existing_spec=existing_spec,
+        instruction=instruction,
+    )
+
+    # ---- FINAL VALIDATION ----
+    SpecOutput(**updated_spec)
+
+    # ---- SAVE TRACE ----
+    os.makedirs("outputs/traces", exist_ok=True)
+    with open(f"outputs/traces/{trace_id}.json", "w") as f:
+        json.dump(updated_spec, f, indent=2)
+
+    return trace_id, updated_spec

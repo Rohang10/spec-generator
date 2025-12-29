@@ -1,0 +1,375 @@
+{
+  "version": 1,
+  "modules": [
+    {
+      "name": "Task Management",
+      "description": "Manage tasks with priorities and due dates"
+    }
+  ],
+  "features_by_module": {
+    "Task Management": [
+      "Create Task",
+      "Edit Task",
+      "Manage Tasks"
+    ]
+  },
+  "user_stories": [
+    {
+      "role": "User",
+      "goal": "Create a new task",
+      "benefit": "Track and manage work"
+    },
+    {
+      "role": "User",
+      "goal": "Edit an existing task",
+      "benefit": "Update task details and priorities"
+    },
+    {
+      "role": "User",
+      "goal": "View and manage all tasks",
+      "benefit": "Stay organized and on top of work"
+    },
+    {
+      "role": "Admin",
+      "goal": "Manage user access and permissions",
+      "benefit": "Ensure secure access to task management"
+    }
+  ],
+  "api_endpoints": [
+    {
+      "method": "POST",
+      "path": "/tasks",
+      "auth_required": true,
+      "request_schema": {
+        "title": "Create Task",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "due_date": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "priority",
+          "due_date"
+        ]
+      },
+      "response_schema": {
+        "title": "Task",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "due_date": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "priority",
+          "due_date"
+        ]
+      },
+      "error_cases": [
+        "Invalid request data",
+        "Unauthorized access"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/tasks",
+      "auth_required": true,
+      "request_schema": {},
+      "response_schema": {
+        "title": "Tasks",
+        "type": "object",
+        "properties": {
+          "tasks": {
+            "type": "array",
+            "items": {
+              "title": "Task",
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "uuid"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "priority": {
+                  "type": "integer"
+                },
+                "due_date": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "priority",
+                "due_date"
+              ]
+            }
+          }
+        },
+        "required": [
+          "tasks"
+        ]
+      },
+      "error_cases": [
+        "Unauthorized access"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/tasks/{id}",
+      "auth_required": true,
+      "request_schema": {},
+      "response_schema": {
+        "title": "Task",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "due_date": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "priority",
+          "due_date"
+        ]
+      },
+      "error_cases": [
+        "Task not found",
+        "Unauthorized access"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/tasks/{id}",
+      "auth_required": true,
+      "request_schema": {
+        "title": "Edit Task",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "due_date": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "priority",
+          "due_date"
+        ]
+      },
+      "response_schema": {
+        "title": "Task",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "due_date": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "priority",
+          "due_date"
+        ]
+      },
+      "error_cases": [
+        "Invalid request data",
+        "Unauthorized access",
+        "Task not found"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/tasks/{id}",
+      "auth_required": true,
+      "request_schema": {},
+      "response_schema": {},
+      "error_cases": [
+        "Task not found",
+        "Unauthorized access"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/login",
+      "auth_required": false,
+      "request_schema": {
+        "title": "Login",
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "response_schema": {
+        "title": "Token",
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "error_cases": [
+        "Invalid credentials"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/register",
+      "auth_required": false,
+      "request_schema": {
+        "title": "Register",
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password",
+          "email"
+        ]
+      },
+      "response_schema": {
+        "title": "Token",
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "error_cases": [
+        "Username already taken",
+        "Invalid email"
+      ]
+    }
+  ],
+  "db_schema": [
+    {
+      "table_name": "tasks",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "constraints": "primary key"
+        },
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "priority",
+          "type": "integer"
+        },
+        {
+          "name": "due_date",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "table_name": "users",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "constraints": "primary key"
+        },
+        {
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "name": "password",
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "name": "role",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "open_questions": [
+    "What is the policy for task assignment and ownership, and how will it be enforced?",
+    "How will task dependencies and relationships be handled, and what APIs will support this functionality?",
+    "What is the behavior when a user attempts to edit a task that has been completed or is in a specific status?",
+    "What is the authentication mechanism for the API (e.g. JWT, OAuth)?",
+    "How will user roles and permissions be managed and enforced?",
+    "What is the policy for password hashing and storage?"
+  ],
+  "contradictions": [
+    "Adding authentication to all APIs contradicts the existing design, which only had authentication for certain endpoints."
+  ]
+}

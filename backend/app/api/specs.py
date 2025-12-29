@@ -1,8 +1,13 @@
+import os
+import json
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from app.pipelines.full_pipeline import run_pipeline
+from app.pipelines.full_pipeline import run_pipeline, run_refinement_pipeline
 from app.validators.requirement_validator import validate_requirements_text
+
+
 
 router = APIRouter(prefix="/specs", tags=["Specs"])
 
@@ -64,3 +69,49 @@ def generate_spec(payload: SpecRequest):
                 "error": str(e)
             }
         )
+
+class RefineRequest(BaseModel):
+    instruction: str
+
+@router.post("/refine")
+def refine_spec_endpoint(payload: RefineRequest):
+    instruction = payload.instruction.strip()   
+
+    if len(instruction) < 5:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "code": "INVALID_REFINEMENT",
+                "message": "Refinement instruction is too short."
+            }
+        )
+
+    # 🔥 Load latest spec automatically
+    trace_dir = "outputs/traces"
+    files = sorted(
+        os.listdir(trace_dir),
+        key=lambda f: os.path.getmtime(os.path.join(trace_dir, f)),
+        reverse=True
+    )
+
+    if not files:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "code": "NO_EXISTING_SPEC",
+                "message": "No existing spec found to refine."
+            }
+        )
+
+    with open(os.path.join(trace_dir, files[0])) as f:
+        existing_spec = json.load(f)
+
+    trace_id, refined_spec = run_refinement_pipeline(
+        existing_spec=existing_spec,
+        instruction=instruction
+    )
+
+    return {
+        "trace_id": trace_id,
+        "spec": refined_spec
+    }

@@ -29,6 +29,7 @@ class DBTable(BaseModel):
     columns: List[DBColumn]
 
 class SpecOutput(BaseModel):
+    version: int
     modules: List[Module]
     features_by_module: Dict[str, List[str]]
     user_stories: List[UserStory]
@@ -37,3 +38,4 @@ class SpecOutput(BaseModel):
     open_questions: List[str] = Field(
         description="Missing, unclear, or ambiguous requirements"
     )
+    contradictions: List[str] = []
