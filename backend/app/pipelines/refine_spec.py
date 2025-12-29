@@ -66,12 +66,16 @@ Refinement Rules:
 
 - Authentication / Authorization / Security:
   → Update api_endpoints
+  → Update modules
+  → Update features_by_module
   → Update user_stories
   → Update db_schema ONLY if roles or permissions are needed
 
 - Error handling / Validation:
   → Update api_endpoints
   → Update user_stories
+  → Update db_schema ONLY if required
+  → Update features_by_module ONLY if new validation features are needed
 
 - Roles / Permissions:
   → Update modules
