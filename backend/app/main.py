@@ -1,12 +1,31 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.specs import router
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    banner = """
+    \033[94m\033[1m
+    ┌────────────────────────────────────────────────────────┐
+    │                                                        │
+    │   🚀  AI Spec Generator Backend Running Successfully!   │
+    │                                                        │
+    │   🌍  Local API:   http://127.0.0.1:8000               │
+    │   📚  Swagger API: http://127.0.0.1:8000/docs          │
+    │                                                        │
+    └────────────────────────────────────────────────────────┘
+    \033[0m
+    """
+    print(banner)
+    yield
+
 app = FastAPI(
     title="AI Spec Generator",
     description="Generate structured API specs + DB schema from messy requirements",
-    version="1.0"
-    )
+    version="1.0",
+    lifespan=lifespan
+)
 
 #CORS middleware    
 app.add_middleware(
