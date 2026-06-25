@@ -16,33 +16,45 @@ def run_pipeline(requirements_text: str):
     trace_id = str(uuid.uuid4())
 
     # ---- STEP 1: FEATURES ----
+    last_err = None
     for _ in range(settings.MAX_RETRIES):
         try:
             features = generate_features(requirements_text)
             break
         except Exception as e:
+            last_err = e
             print("Feature retry failed:", e)
     else:
+        if last_err:
+            raise last_err
         raise Exception("Feature extraction failed")
 
     # ---- STEP 2: USER STORIES ----
+    last_err = None
     for _ in range(settings.MAX_RETRIES):
         try:
             stories = generate_user_stories(features)
             break
         except Exception as e:
+            last_err = e
             print("Story retry failed:", e)
     else:
+        if last_err:
+            raise last_err
         raise Exception("User story generation failed")
 
     # ---- STEP 3: API + DB ----
+    last_err = None
     for _ in range(settings.MAX_RETRIES):
         try:
             api_db = generate_api_db(features)
             break
         except Exception as e:
+            last_err = e
             print("API/DB retry failed:", e)
     else:
+        if last_err:
+            raise last_err
         raise Exception("API/DB generation failed")
 
     # ---- STEP 4: OPEN QUESTIONS (ONLY AFTER SUCCESS) ----
