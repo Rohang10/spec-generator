@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 
 class Module(BaseModel):
     name: str
@@ -14,8 +14,8 @@ class APIEndpoint(BaseModel):
     method: str
     path: str
     auth_required: bool
-    request_schema: Dict
-    response_schema: Dict
+    request_schema: Any
+    response_schema: Any
     error_cases: List[str]
 
 class DBColumn(BaseModel):

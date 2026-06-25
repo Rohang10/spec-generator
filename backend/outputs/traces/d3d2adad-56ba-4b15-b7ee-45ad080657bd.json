@@ -1,0 +1,270 @@
+{
+  "version": 1,
+  "modules": [
+    {
+      "name": "User Management",
+      "description": "Handles user authentication."
+    },
+    {
+      "name": "Idea Management",
+      "description": "Manages ideas submitted by users."
+    },
+    {
+      "name": "Admin Management",
+      "description": "Provides administrative actions for ideas."
+    }
+  ],
+  "features_by_module": {
+    "User Management": [
+      "User Login"
+    ],
+    "Idea Management": [
+      "Submit Idea",
+      "Edit Own Idea",
+      "View All Ideas"
+    ],
+    "Admin Management": [
+      "Approve Idea",
+      "Reject Idea"
+    ]
+  },
+  "user_stories": [
+    {
+      "role": "User",
+      "goal": "log in to the system",
+      "benefit": "access my account and its functionalities"
+    },
+    {
+      "role": "User",
+      "goal": "submit a new idea",
+      "benefit": "share my suggestions with the community"
+    },
+    {
+      "role": "User",
+      "goal": "edit an idea I have submitted",
+      "benefit": "correct mistakes or improve my idea"
+    },
+    {
+      "role": "User",
+      "goal": "view all submitted ideas",
+      "benefit": "see what others have suggested"
+    },
+    {
+      "role": "Admin",
+      "goal": "approve a submitted idea",
+      "benefit": "allow valid and valuable ideas to proceed"
+    },
+    {
+      "role": "Admin",
+      "goal": "reject a submitted idea",
+      "benefit": "filter out inappropriate or unfeasible ideas"
+    }
+  ],
+  "api_endpoints": [
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "auth_required": false,
+      "request_schema": {
+        "username": "string",
+        "password": "string"
+      },
+      "response_schema": {
+        "token": "string"
+      },
+      "error_cases": [
+        "Invalid credentials",
+        "User not found"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/ideas",
+      "auth_required": true,
+      "request_schema": {
+        "title": "string",
+        "description": "string"
+      },
+      "response_schema": {
+        "id": "uuid",
+        "user_id": "uuid",
+        "title": "string",
+        "description": "string",
+        "status": "string",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "error_cases": [
+        "Unauthorized access",
+        "Invalid request data"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/ideas/{idea_id}",
+      "auth_required": true,
+      "request_schema": {
+        "title": "string",
+        "description": "string"
+      },
+      "response_schema": {
+        "id": "uuid",
+        "user_id": "uuid",
+        "title": "string",
+        "description": "string",
+        "status": "string",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "error_cases": [
+        "Unauthorized access",
+        "Idea not found",
+        "Not authorized to edit this idea",
+        "Invalid request data"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/ideas",
+      "auth_required": true,
+      "request_schema": {},
+      "response_schema": [
+        {
+          "id": "uuid",
+          "user_id": "uuid",
+          "title": "string",
+          "description": "string",
+          "status": "string",
+          "created_at": "timestamp",
+          "updated_at": "timestamp"
+        }
+      ],
+      "error_cases": [
+        "Unauthorized access"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/admin/ideas/{idea_id}/approve",
+      "auth_required": true,
+      "request_schema": {},
+      "response_schema": {
+        "id": "uuid",
+        "user_id": "uuid",
+        "title": "string",
+        "description": "string",
+        "status": "string",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "error_cases": [
+        "Unauthorized access",
+        "Idea not found",
+        "Not authorized as admin"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/admin/ideas/{idea_id}/reject",
+      "auth_required": true,
+      "request_schema": {},
+      "response_schema": {
+        "id": "uuid",
+        "user_id": "uuid",
+        "title": "string",
+        "description": "string",
+        "status": "string",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "error_cases": [
+        "Unauthorized access",
+        "Idea not found",
+        "Not authorized as admin"
+      ]
+    }
+  ],
+  "db_schema": [
+    {
+      "table_name": "users",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "constraints": "primary key"
+        },
+        {
+          "name": "username",
+          "type": "string",
+          "constraints": "unique, not null"
+        },
+        {
+          "name": "password_hash",
+          "type": "string",
+          "constraints": "not null"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "constraints": "not null, default 'user'"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp",
+          "constraints": "not null, default current_timestamp"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp",
+          "constraints": "not null, default current_timestamp"
+        }
+      ]
+    },
+    {
+      "table_name": "ideas",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "constraints": "primary key"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "constraints": "foreign key references users(id), not null"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "constraints": "not null"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "constraints": "not null"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "constraints": "not null, default 'pending'"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp",
+          "constraints": "not null, default current_timestamp"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp",
+          "constraints": "not null, default current_timestamp"
+        }
+      ]
+    }
+  ],
+  "open_questions": [
+    "How are users initially assigned the 'admin' role, and is there a process for changing user roles or managing permissions post-registration?",
+    "What are the subsequent states or actions for an idea once it has been 'Approved' or 'Rejected'? For example, can a rejected idea be re-submitted or can an approved idea transition to an 'In Progress' or 'Implemented' status?",
+    "The original requirement mentions 'manage their ideas and internal requests.' Are 'internal requests' considered the same as 'ideas,' or is there a separate type of submission or workflow required for requests that is not covered by the current 'Idea Management' module?",
+    "Beyond simply viewing all ideas, are there requirements for users to interact with ideas submitted by others, such as commenting, voting, or filtering/searching ideas by status, category, or submitter?"
+  ]
+}

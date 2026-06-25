@@ -1,15 +1,6 @@
-import os
 import json
 import re
-from groq import Groq
-from dotenv import load_dotenv
-
-load_dotenv()
-
-# ---------- Groq Client ----------
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
-
+from app.core.gemini_client import call_gemini
 
 # ---------- Helper: Safe JSON Extraction ----------
 def extract_json_array(text: str) -> list[str]:
@@ -32,7 +23,7 @@ def generate_open_questions(
     db_schema: list,
 ) -> list[str]:
     """
-    Generate 3–4 intelligent, context-specific open questions.
+    Generate 3–4 intelligent, context-specific open questions using Gemini.
     Runs ONLY after the pipeline succeeds.
     """
 
@@ -65,7 +56,7 @@ Instructions:
 - Focus on permissions, workflows, edge cases, and business rules
 
 Output format (STRICT):
-Return ONLY valid JSON.
+Return ONLY valid JSON array of strings.
 Do NOT include explanations, headings, or extra text.
 
 Example output:
@@ -76,29 +67,19 @@ Example output:
 ]
 """
 
-    response = client.chat.completions.create(
-        model=MODEL,
-        messages=[
-            {
-                "role": "system",
-                "content": "You generate precise, context-aware product clarification questions.",
-            },
-            {"role": "user", "content": prompt},
-        ],
-        temperature=0.2,
-    )
-
-    raw_output = response.choices[0].message.content.strip()
-
     try:
+        raw_output = call_gemini(
+            prompt=prompt,
+            system_instruction="You generate precise, context-aware product clarification questions.",
+            temperature=0.2,
+        )
+        
         questions = extract_json_array(raw_output)
         return questions[:4]
 
-    except Exception :
+    except Exception as e:
         # ---------- Fallback (never break pipeline) ----------
-        print("⚠️ Open-question parsing failed. Raw output:")
-        print(raw_output)
-
+        print("⚠️ Open-question parsing failed or API error:", e)
         return [
             "Are there different user roles with varying permissions?",
             "Should notifications or reminders be configurable?",

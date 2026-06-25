@@ -1,14 +1,14 @@
 import uuid
 import json
 import os
-from typing import Dict
+from typing import Dict, Any
 
 from app.schemas.spec_schema import SpecOutput
 from app.core.config import settings
 from app.pipelines.step1_features import generate_features
 from app.pipelines.step2_user_stories import generate_user_stories
 from app.pipelines.step3_api_db import generate_api_db
-from app.utils.open_questions_groq import generate_open_questions
+from app.utils.open_questions_gemini import generate_open_questions
 from app.pipelines.refine_spec import refine_spec
 
 
@@ -54,7 +54,7 @@ def run_pipeline(requirements_text: str):
         db_schema=api_db["db_schema"],
     )
 
-    final_spec = {
+    final_spec: Dict[str, Any] = {
         "version": 1,
         **features,
         **stories,
@@ -86,7 +86,7 @@ def run_refinement_pipeline(
     trace_id = str(uuid.uuid4())
 
     # ---- RUN REFINEMENT ----
-    updated_spec = refine_spec(
+    updated_spec: Dict[str, Any] = refine_spec(
         existing_spec=existing_spec,
         instruction=instruction,
     )

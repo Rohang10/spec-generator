@@ -1,23 +1,8 @@
-import os
 import json
 import re
 
-from groq import Groq
-from dotenv import load_dotenv
-
 from app.schemas.spec_schema import SpecOutput
-from app.core.config import settings  # noqa: F401
-
-# ----------------------------------
-# Load environment variables
-# ----------------------------------
-load_dotenv()
-
-# ----------------------------------
-# Groq client initialization
-# ----------------------------------
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+from app.core.gemini_client import call_gemini
 
 
 # ----------------------------------
@@ -116,22 +101,11 @@ Rules:
 - Output ONLY valid JSON (no text outside JSON)
 """
 
-    response = client.chat.completions.create(
-        model=MODEL,
-        messages=[
-            {
-                "role": "system",
-                "content": "You refine technical specifications safely.",
-            },
-            {
-                "role": "user",
-                "content": prompt,
-            },
-        ],
+    raw_output = call_gemini(
+        prompt=prompt,
+        system_instruction="You refine technical specifications safely.",
         temperature=0.2,
     )
-
-    raw_output = response.choices[0].message.content.strip()
 
     updated_spec = extract_json_object(raw_output)
 

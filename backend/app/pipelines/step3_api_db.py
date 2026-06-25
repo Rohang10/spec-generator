@@ -1,7 +1,7 @@
 import json
 import os
 
-from app.core.groq_client import call_groq
+from app.core.gemini_client import call_gemini
 from app.core.prompt_loader import load_prompt
 from app.schemas.spec_schema import APIEndpoint, DBTable
 from app.pipelines.utils import extract_json
@@ -18,7 +18,7 @@ def generate_api_db(features: dict) -> dict:
         features_json=json.dumps(features, indent=2)
     )
 
-    raw = call_groq(prompt)
+    raw = call_gemini(prompt)
     raw_json = extract_json(raw)
 
     data = json.loads(raw_json)
