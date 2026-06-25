@@ -10,7 +10,7 @@ async def lifespan(app: FastAPI):
     \033[94m\033[1m
     ┌────────────────────────────────────────────────────────┐
     │                                                        │
-    │   🚀  AI Spec Generator Backend Running Successfully!   │
+    │   🚀  AI Spec Generator Backend Running Successfully!  │
     │                                                        │
     │   🌍  Local API:   http://127.0.0.1:8000               │
     │   📚  Swagger API: http://127.0.0.1:8000/docs          │
@@ -41,7 +41,4 @@ app.include_router(router)
 
 @app.get("/", response_class=PlainTextResponse)
 def read_root():
-    return (
-        "🚀  AI Spec Generator Backend Running Successfully!\n"
-        "🌍  Local API:   http://127.0.0.1:8000               📚  Swagger API: http://127.0.0.1:8000/docs"
-    )
+    return "🚀  AI Spec Generator Backend Running Successfully!\n"
